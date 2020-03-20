@@ -1,8 +1,7 @@
-
 if not __package__:
 	import sys
 	sys.path.append('../')
-from Mooc.Mooc_Base import *
+from MoocBot.Mooc_Base import *
 
 class Icourse163_Base(Mooc_Base):
 	def __init__(self):
@@ -99,10 +98,6 @@ class Icourse163_Base(Mooc_Base):
 
 	@abstractmethod
 	def _printInfo(self):
-		pass
-
-	@abstractmethod
-	def _creatHTML(self):
 		pass
 
 	@abstractmethod

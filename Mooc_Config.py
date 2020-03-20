@@ -1,12 +1,4 @@
-
 import re
-
-# ftp
-HOST = ''
-PORT = 21
-USERNAME = ''
-PASSWORD = ''
-BUFSIZE = 1024
 
 # 
 TIMEOUT = 60

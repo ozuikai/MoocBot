@@ -5,13 +5,11 @@ if __package__ is None:
 	sys.path.append('..\\')
 	sys.path.append("..\\..\\")
 import time
-# import asyncio
-# from lxml import etree
 import threading
-from Mooc.Mooc_Request import *
-from Mooc.Mooc_Config import *
-from Mooc.Icourse163.Icourse163_Base import *
-from Mooc.Icourse163.Icourse163_Config import *
+from MoocBot.Mooc_Request import *
+from MoocBot.Mooc_Config import *
+from MoocBot.Icourse163.Icourse163_Base import *
+from MoocBot.Icourse163.Icourse163_Config import *
 
 class Icourse163_Mooc(Icourse163_Base):
 	course_url = "https://www.icourse163.org/course/"
@@ -79,7 +77,6 @@ class Icourse163_Mooc(Icourse163_Base):
 		if ret:
 			title = '_'.join(ret)
 			self.title = winre.sub('', title)[:WIN_LENGTH] # 用于除去win文件非法字符
-		# print(self.title, '\n')
 
 	def _getUnitLink(self, content_id, content_type, uid):
 		download_link = None
@@ -164,7 +161,6 @@ class Icourse163_Mooc(Icourse163_Base):
 		lessons = re.findall(r';\n?(\w*\d*).lessons', response)
 		lesson_info = [re.findall(fr'{i}\.name="(.+)"', response) for i in lessons]
 		lesson_info = [i[0] for i in lesson_info]
-		# print(lesson_info, '\n')
 		# chapter
 		chapter_info = []
 		chapter_prefix = [re.findall(fr'{i}\.lessons=(\w*\d*)', response) for i in lessons]
@@ -173,10 +169,8 @@ class Icourse163_Mooc(Icourse163_Base):
 			chapter_name_sub = [re.findall(fr'{i}\.name="(.+)"', response) for i in i_list]
 			chapter_name_sub = [i[0] for i in chapter_name_sub]
 			chapter_info.append(chapter_name_sub)
-		# print(chapter_info, '\n')
 		# unit-video / unit-pdf
 		unit_info = self._getUnitInfo(chapter, response)
-		# print(unit_info, '\n')
 		self.all_info['lesson_info'] = lesson_info
 		self.all_info['chapter_info'] = chapter_info
 		self.all_info['unit_info'] = unit_info
@@ -198,64 +192,24 @@ class Icourse163_Mooc(Icourse163_Base):
 							if isinstance(link_info, str): # pdf
 								print(f'|  |  |  |  |  |──{link_info}')
 
-	def _creatHTML(self):
-		src = ''
-		src += f'<html><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><head></head><title>{self.title}</title><body>'
-		src += f'<h3>{self.title}</h3>'
-		src += '<ul>'
-		for lesson_name in enumerate(self.all_info['lesson_info']):
-			src += f'<li>{lesson_name[1]}</li>'
-			src += '<ul>'
-			for chapter_name in enumerate(self.all_info['chapter_info'][lesson_name[0]]):
-				src += f'<li>{chapter_name[1]}</li>'
-				src += '<ul>'
-				for sub in self.all_info['unit_info'][lesson_name[0]][chapter_name[0]]:
-					src += f'<li>{sub[0]}</li>'
-					src += '<ul>'
-					if sub[1]:
-						for link_type in sub[1]:
-							src += f'<li>{link_type.upper()}</li>'
-							link_info = sub[1][link_type]
-							if isinstance(link_info, dict): # video
-								for link_tag,link_value in link_info.items():
-									if link_value:
-										src += f'<a href="{link_value}">{link_tag.upper()}</a> / '
-									else:
-										src += f'<a">{link_tag.upper()}</a> / '
-								src = src[:-3]
-							if isinstance(link_info, str): # pdf
-								if link_info:
-									src += f'<a href="{link_info}">FILE</a>'
-								else:
-									src += f'<a">FILE</a>'
-					src += '</ul>'
-				src += '</ul>'
-			src += '</ul>'
-		src += '</ul>'
-		src += '</body></html>'
-		with open(f"{self._base_path}/Mooc/Icourse163/page/{self.cid}.html", 'wb') as fp:
-			fp.write(src.encode('utf-8'))
-			fp.close()
-		self.uploadSrc('icourse163', self.cid)
-
 	def prepare(self, url):
 		self._getCid(url)
 		self._getTitle()
 		self._getAllInfo()
-		print(self.cid)
-		print(self.all_info)
 		# self._printInfo()
-		# self._creatHTML()
-		# return self.link
+		data = {
+			'cid': self.cid,
+			'title': self.title,
+			'info': str(self.all_info)
+		}
+		self.postInfo(data)
 
 def main():
-	# url = 'https://www.icourse163.org/learn/BIT-1001870002?tid=1207408201#/learn/content?type=detail&id=1212743005&sm=1'
-	url = 'https://www.icourse163.org/learn/BIT-1001870002'
+	# url = 'https://www.icourse163.org/learn/BIT-1001870002'
 	# url = 'https://www.icourse163.org/learn/HIT-69005'
-	# url = 'https://www.icourse163.org/learn/XJTU-1206495807'
+	url = 'https://www.icourse163.org/learn/XJTU-1206495807'
 	mooc = Icourse163_Mooc()
-	ret = mooc.prepare(url)
-	print(ret)
+	mooc.prepare(url)
 
 if __name__ == '__main__':
 	main()

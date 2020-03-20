@@ -1,4 +1,3 @@
-
 # IS_SHD, IS_HD, IS_SD, ONLY_PDF
 MODE = 'IS_SHD'
 
