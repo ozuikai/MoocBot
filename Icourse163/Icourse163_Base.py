@@ -97,9 +97,5 @@ class Icourse163_Base(Mooc_Base):
 		pass
 
 	@abstractmethod
-	def _printInfo(self):
-		pass
-
-	@abstractmethod
 	def prepare(self, url):
 		pass

@@ -13,9 +13,21 @@ class Mooc_Base(ABC):
 
 	@staticmethod
 	def postInfo(mooc_info):
-		url = 'http://127.0.0.1:5000/mooc/api'
+		url = 'http://127.0.0.1:5000/mooc/insert'
 		response = requestPost(url, data = mooc_info)
-		print(response.text)
+		ret = response.json()
+		return ret
+
+	@staticmethod
+	def checkInfo(mooc_info):
+		url = 'http://127.0.0.1:5000/mooc/query'
+		response = requestPost(url, data = mooc_info)
+		ret = response.json()
+		print(ret)
+		if ret['code'] == 200:
+			return True
+		else:
+			return False
 
 def main():
 	pass

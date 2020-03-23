@@ -175,39 +175,28 @@ class Icourse163_Mooc(Icourse163_Base):
 		self.all_info['chapter_info'] = chapter_info
 		self.all_info['unit_info'] = unit_info
 
-	def _printInfo(self):
-		print(f'┌──{self.title}')
-		for lesson_name in enumerate(self.all_info['lesson_info']):
-			print(f'|  |──{lesson_name[1]}')
-			for chapter_name in enumerate(self.all_info['chapter_info'][lesson_name[0]]):
-				print(f'|  |  |──{chapter_name[1]}')
-				for sub in self.all_info['unit_info'][lesson_name[0]][chapter_name[0]]:
-					print(f'|  |  |  |──{sub[0]}')
-					if sub[1]:
-						for link_type in sub[1]:
-							print(f'|  |  |  |  |──{link_type}')
-							link_info = sub[1][link_type]
-							if isinstance(link_info, dict): # video
-								[print(f'|  |  |  |  |  |──{link_tag}:{link_value}') for link_tag,link_value in link_info.items()]
-							if isinstance(link_info, str): # pdf
-								print(f'|  |  |  |  |  |──{link_info}')
-
 	def prepare(self, url):
 		self._getCid(url)
-		self._getTitle()
-		self._getAllInfo()
-		# self._printInfo()
 		data = {
-			'cid': self.cid,
-			'title': self.title,
-			'info': str(self.all_info)
+			'cid': self.cid
 		}
-		self.postInfo(data)
+		ret = self.checkInfo(data)
+		if not ret:
+			self._getTitle()
+			self._getAllInfo()
+			data = {
+				'cid': self.cid,
+				'title': self.title,
+				'info': str(self.all_info)
+			}
+			ret = self.postInfo(data)
+			print(ret)
+		return self.link
 
 def main():
-	# url = 'https://www.icourse163.org/learn/BIT-1001870002'
+	url = 'https://www.icourse163.org/learn/BIT-1001870002'
 	# url = 'https://www.icourse163.org/learn/HIT-69005'
-	url = 'https://www.icourse163.org/learn/XJTU-1206495807'
+	# url = 'https://www.icourse163.org/learn/XJTU-1206495807'
 	mooc = Icourse163_Mooc()
 	mooc.prepare(url)
 
