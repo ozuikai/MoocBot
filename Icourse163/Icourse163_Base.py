@@ -10,6 +10,7 @@ class Icourse163_Base(Mooc_Base):
 		self.__cid = None
 		self.__link = None
 		self.__title = None
+		self.__school = None
 		self.__term_id = None
 		self.__unit_link = None
 		self.__all_info = None
@@ -19,7 +20,7 @@ class Icourse163_Base(Mooc_Base):
 	@property
 	def mode(self):
 		return self.__mode
-	
+
 	@mode.setter
 	def mode(self, mode):
 		self.__mode = mode
@@ -27,7 +28,7 @@ class Icourse163_Base(Mooc_Base):
 	@property
 	def cid(self):
 		return self.__cid
-	
+
 	@cid.setter
 	def cid(self, cid):
 		self.__cid = cid
@@ -43,15 +44,23 @@ class Icourse163_Base(Mooc_Base):
 	@property
 	def title(self):
 		return self.__title
-	
+
 	@title.setter
 	def title(self, title):
 		self.__title = title
 
 	@property
+	def school(self):
+		return self.__school
+
+	@school.setter
+	def school(self, school):
+		self.__school = school
+
+	@property
 	def term_id(self):
 		return self.__term_id
-	
+
 	@term_id.setter
 	def term_id(self, term_id):
 		self.__term_id = term_id
@@ -59,7 +68,7 @@ class Icourse163_Base(Mooc_Base):
 	@property
 	def unit_link(self):
 		return self.__unit_link
-	
+
 	@unit_link.setter
 	def unit_link(self, unit_link):
 		self.__unit_link = unit_link
@@ -67,7 +76,7 @@ class Icourse163_Base(Mooc_Base):
 	@property
 	def all_info(self):
 		return self.__all_info
-	
+
 	@all_info.setter
 	def all_info(self, all_info):
 		self.__all_info = all_info

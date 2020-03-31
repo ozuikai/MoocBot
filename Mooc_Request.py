@@ -29,11 +29,11 @@ def requestDecorate(func):
 	return requestPro
 
 @requestDecorate
-def requestGet(url):
+def requestGet(url, headers = headers):
 	response = requests.get(url, headers = headers, timeout = TIMEOUT)
 	return response
 
 @requestDecorate
-def requestPost(url, data):
+def requestPost(url, data, headers = headers):
 	response = requests.post(url, data = data, headers = headers, timeout = TIMEOUT)
 	return response

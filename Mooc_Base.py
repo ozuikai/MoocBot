@@ -14,6 +14,7 @@ class Mooc_Base(ABC):
 	@staticmethod
 	def postInfo(mooc_info):
 		url = 'http://127.0.0.1:5000/mooc/insert'
+		# url = 'http://178.62.80.215:5000/mooc/insert'
 		response = requestPost(url, data = mooc_info)
 		ret = response.json()
 		return ret
@@ -21,7 +22,10 @@ class Mooc_Base(ABC):
 	@staticmethod
 	def checkInfo(mooc_info):
 		url = 'http://127.0.0.1:5000/mooc/query'
-		response = requestPost(url, data = mooc_info)
+		# url = 'http://178.62.80.215:5000/mooc/query'
+		headers = { 'Content-Type': 'application/json' }
+		mooc_info = json.dumps(mooc_info)
+		response = requestPost(url, data = mooc_info, headers = headers)
 		ret = response.json()
 		print(ret)
 		if ret['code'] == 200:

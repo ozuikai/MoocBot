@@ -1,5 +1,6 @@
 import re
 import os
+import time
 if __package__ is None:
 	import sys
 	sys.path.append('..\\')
@@ -71,12 +72,13 @@ class Icourse163_Mooc(Icourse163_Base):
 			return
 		self.title = self.term_id = None
 		url = self.course_url + self.cid
+		print(url)
 		response = requestGet(url)
 		self._getTermId(response)
-		ret = re.findall(r'name:"(.+)"', response)
+		ret = re.findall(r'<title>(.+)</title>', response)
 		if ret:
-			title = '_'.join(ret)
-			self.title = winre.sub('', title)[:WIN_LENGTH] # 用于除去win文件非法字符
+			self.title = ret[0].split('_')[0]
+			self.school = ret[0].split('_')[1]
 
 	def _getUnitLink(self, content_id, content_type, uid):
 		download_link = None
@@ -87,32 +89,34 @@ class Icourse163_Mooc(Icourse163_Base):
 		response = requestPost(self.lesson_url, data = lesson_data)
 		if content_type == '1':
 			download_link = {
-				'flv':{
-					'hd':None,
-					'sd':None,
-					'shd':None
+				'FLV':{
+					'HD':None,
+					'SD':None,
+					'SHD':None
 				},
-				'mp4':{
-					'hd':None,
-					'sd':None,
-					'shd':None
+				'MP4':{
+					'HD':None,
+					'SD':None,
+					'SHD':None
 				}
 			}
 			try:
-				download_link['flv']['hd'] = re.findall(r'flvHdUrl="([\w\d:/\-_?.=]+)";', response)[0]
-				download_link['flv']['sd'] = re.findall(r'flvSdUrl="([\w\d:/\-_?.=]+)";', response)[0]
-				download_link['flv']['shd'] = re.findall(r'flvShdUrl="([\w\d:/\-_?.=]+)";', response)[0]
-				download_link['mp4']['hd'] = re.findall(r'mp4HdUrl="([\w\d:/\-_?.=]+)";', response)[0]
-				download_link['mp4']['sd'] = re.findall(r'mp4SdUrl="([\w\d:/\-_?.=]+)";', response)[0]
-				download_link['mp4']['shd'] = re.findall(r'mp4ShdUrl="([\w\d:/\-_?.=]+)";', response)[0]
+				download_link['FLV']['HD'] = re.findall(r'flvHdUrl="([\w\d:/\-_?.=]+)";', response)[0]
+				download_link['FLV']['SD'] = re.findall(r'flvSdUrl="([\w\d:/\-_?.=]+)";', response)[0]
+				download_link['FLV']['SHD'] = re.findall(r'flvShdUrl="([\w\d:/\-_?.=]+)";', response)[0]
+				download_link['MP4']['HD'] = re.findall(r'mp4HdUrl="([\w\d:/\-_?.=]+)";', response)[0]
+				download_link['MP4']['SD'] = re.findall(r'mp4SdUrl="([\w\d:/\-_?.=]+)";', response)[0]
+				download_link['MP4']['SHD'] = re.findall(r'mp4ShdUrl="([\w\d:/\-_?.=]+)";', response)[0]
 			except IndexError:
 				pass
 		elif content_type == '3':
 			download_link = {
-				'pdf':None
+				'PDF':{
+					'FILE':None
+				}
 			}
 			try:
-				download_link['pdf'] = re.findall(r'textOrigUrl:"(.+\.pdf)",', response)[0]
+				download_link['PDF']['FILE'] = re.findall(r'textOrigUrl:"(.+\.pdf)",', response)[0]
 			except IndexError:
 				pass
 		# 讨论
@@ -187,7 +191,9 @@ class Icourse163_Mooc(Icourse163_Base):
 			data = {
 				'cid': self.cid,
 				'title': self.title,
-				'info': str(self.all_info)
+				'school': self.school,
+				# 构造可以被JSON.parse解析的格式
+				'info': str(self.all_info).replace('"', r'\"').replace("'", '"').replace('None', '""')
 			}
 			ret = self.postInfo(data)
 			print(ret)

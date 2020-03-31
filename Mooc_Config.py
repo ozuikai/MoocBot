@@ -2,8 +2,6 @@ import re
 
 # 
 TIMEOUT = 60
-WIN_LENGTH = 64
-winre = re.compile(r'[?*|<>:"/\\\s]')  # windoes 文件非法字符匹配
 
 # 课程链接的正则匹配
 courses_re = {
