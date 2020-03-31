@@ -3,10 +3,12 @@ if not __package__:
 	sys.path.append('.\\')
 	sys.path.append('..\\')
 
-from Mooc.Mooc_Interface import *
+from Icourse163.Icourse163_Mooc import *
 
-def main():
-	print('test')
+def mooc(url, update=None):
+	mooc = Icourse163_Mooc()
+	link = mooc.prepare(url, update)
+	return link
 
 if __name__ == '__main__':
-	main()
+	mooc()

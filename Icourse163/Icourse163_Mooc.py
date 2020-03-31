@@ -52,7 +52,7 @@ class Icourse163_Mooc(Icourse163_Base):
 		match = courses_re['icourse163'].match(url)
 		if match and match.group(4):
 			self.cid = match.group(4)
-			self.link = f'https://mooc.uue.me/icourse163/{self.cid}.html'
+			self.link = f'https://mooc.uue.me/#/icourse163/{self.cid}'
 
 	def _getTermId(self, response):
 		ret = re.search(r'termId : "(\d+)"', response)
@@ -179,12 +179,14 @@ class Icourse163_Mooc(Icourse163_Base):
 		self.all_info['chapter_info'] = chapter_info
 		self.all_info['unit_info'] = unit_info
 
-	def prepare(self, url):
+	def prepare(self, url, update):
 		self._getCid(url)
+		if not self.cid:
+			return '输入的网址好像不正确\n再检查一下下~'
 		data = {
 			'cid': self.cid
 		}
-		ret = self.checkInfo(data)
+		ret = self.checkInfo(data, update)
 		if not ret:
 			self._getTitle()
 			self._getAllInfo()
